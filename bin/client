@@ -49,17 +49,17 @@ $response = new Messages\Response();
 $connector->connect('127.0.0.1:8008')->then(function (Socket\ConnectionInterface $conn) use ($loop, $request, $response) {
     $conn->write(
         // encode request payload
-        $request->encode()
+        $request->serializeToString()
     );
     $conn->on('data', function ($data) use ($response) {
         // decode response payload
-        $response->decode($data);
+        $response->mergeFromString($data);
     });
 });
 
 $loop->run();
 
-if ($response->getData()->getFieldName() != 'error') {
+if ($response->getData() != 'error') {
     // do something with your response
 } else {
     // error occurred!!!!
