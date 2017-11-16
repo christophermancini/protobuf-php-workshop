@@ -1,6 +1,6 @@
 <?php
 
-namespace MyApp\Tests;
+namespace PhpWorld\Tests;
 
 use PHPUnit\Framework\TestCase;
 use React\EventLoop;
@@ -25,17 +25,17 @@ class ClientTest extends TestCase
         $response = new Messages\Response();
 
         $connector->connect('127.0.0.1:8008')->then(function (Socket\ConnectionInterface $conn) use ($loop, $request, $response) {
-            $conn->write($request->encode());
+            $conn->write($request->serializeToString());
             $conn->on('data', function ($data) use ($response) {
-                $response->decode($data);
+                $response->mergeFromString($data);
             });
         });
 
         $loop->run();
 
-        $this->assertEquals($response->getData()->getFieldName(), 'user');
+        $this->assertEquals($response->getData(), 'user');
 
-        $returnedUser = $response->getData()->getValue();
+        $returnedUser = $response->getUser();
         $this->assertInstanceOf(Messages\User::class, $returnedUser);
         $this->assertEquals($user->getName(), $returnedUser->getName());
         $this->assertGreaterThan(0, $returnedUser->getId());
@@ -55,17 +55,17 @@ class ClientTest extends TestCase
         $response = new Messages\Response();
 
         $connector->connect('127.0.0.1:8008')->then(function (Socket\ConnectionInterface $conn) use ($loop, $request, $response) {
-            $conn->write($request->encode());
+            $conn->write($request->serializeToString());
             $conn->on('data', function ($data) use ($response) {
-                $response->decode($data);
+                $response->mergeFromString($data);
             });
         });
 
         $loop->run();
 
-        $this->assertEquals($response->getData()->getFieldName(), 'user');
+        $this->assertEquals($response->getData(), 'user');
 
-        $user = $response->getData()->getValue();
+        $user = $response->getUser();
         $this->assertInstanceOf(Messages\User::class, $user);
         $this->assertEquals($user->getName(), 'Christopher Mancini');
         $this->assertEquals($user->getEmail(), 'chris@domain.com');
@@ -87,17 +87,17 @@ class ClientTest extends TestCase
         $response = new Messages\Response();
 
         $connector->connect('127.0.0.1:8008')->then(function (Socket\ConnectionInterface $conn) use ($loop, $request, $response) {
-            $conn->write($request->encode());
+            $conn->write($request->serializeToString());
             $conn->on('data', function ($data) use ($response) {
-                $response->decode($data);
+                $response->mergeFromString($data);
             });
         });
 
         $loop->run();
 
-        $this->assertEquals($response->getData()->getFieldName(), 'user');
+        $this->assertEquals($response->getData(), 'user');
 
-        $returnedUser = $response->getData()->getValue();
+        $returnedUser = $response->getUser();
         $this->assertInstanceOf(Messages\User::class, $returnedUser);
         $this->assertEquals($user->getName(), $returnedUser->getName());
         $this->assertEquals($user->getEmail(), $returnedUser->getEmail());
@@ -118,17 +118,17 @@ class ClientTest extends TestCase
         $response = new Messages\Response();
 
         $connector->connect('127.0.0.1:8008')->then(function (Socket\ConnectionInterface $conn) use ($loop, $request, $response) {
-            $conn->write($request->encode());
+            $conn->write($request->serializeToString());
             $conn->on('data', function ($data) use ($response) {
-                $response->decode($data);
+                $response->mergeFromString($data);
             });
         });
 
         $loop->run();
 
-        $this->assertEquals($response->getData()->getFieldName(), 'error');
+        $this->assertEquals($response->getData(), 'error');
 
-        $error = $response->getData()->getValue();
+        $error = $response->getError();
         $this->assertInstanceOf(Messages\Response_Error::class, $error);
         $this->assertEquals($error->getCode(), '404');
     }

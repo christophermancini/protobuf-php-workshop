@@ -93,3 +93,15 @@ echo 'extension=protobuf.so' | sudo tee /etc/php/7.0/cli/conf.d/protobuf.ini
 
 php -m | grep protobuf
 ```
+
+### Installing composer dependencies
+
+`composer install --prefer-dist`
+
+### Compiling .proto messages
+
+```bash
+protoc --php_out=src/ --proto_path=proto/ proto/request.proto
+protoc --php_out=src/ --proto_path=proto/ proto/response.proto
+protoc --php_out=src/ --proto_path=proto/ proto/user.proto
+```

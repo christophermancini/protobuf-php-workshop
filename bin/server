@@ -29,12 +29,6 @@ use PhpWorld\Messages;
 
 $loop = React\EventLoop\Factory::create();
 
-// initialize request object
-$request = new Messages\Request();
-
-// initialize response object
-$response = new Messages\Response();
-
 // temporary storage of users
 $users = [];
 
@@ -42,20 +36,24 @@ $socket = new React\Socket\Server(8008, $loop);
 
 echo "Server started and listening on port 8008\n";
 
-$socket->on('connection', function (React\Socket\ConnectionInterface $conn) use ($request, $response, &$users) {
+$socket->on('connection', function (React\Socket\ConnectionInterface $conn) use (&$users) {
     echo "Connection made\n";
 
-    $conn->on('data', function ($data) use ($conn, $request, $response, &$users) {
+    $conn->on('data', function ($data) use ($conn, &$users) {
         echo "Data received.\n";
 
         // request payload
-        $request->decode($data);
+        $request = new Messages\Request();
+        $request->mergeFromString($data);
+
+        // initialize response object
+        $response = new Messages\Response();
 
         // use the OneOf's FieldName method to determine which type of request is incoming
-        switch ($request->getData()->getFieldName()) {
+        switch ($request->getData()) {
             // a useer request
             case 'user':
-                $user = $request->getData()->getValue();
+                $user = $request->getUser();
 
                 if ($user->getId() && !$user->getName()) {
 
@@ -88,9 +86,10 @@ $socket->on('connection', function (React\Socket\ConnectionInterface $conn) use 
 
                 }
         }
+
         $conn->end(
             // response payload
-            $response->encode()
+            $response->serializeToString()
         );
     });
 });

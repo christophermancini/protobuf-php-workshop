@@ -15,7 +15,10 @@
       }
     ],
     "autoload": {
-      "psr-4": {"PhpWorld\\": "src/"}
+      "psr-4": {
+        "PhpWorld\\": "src/PhpWorld/",
+        "GPBMetadata\\": "src/GPBMetadata/"
+      }
     },
     "autoload-dev": {
       "psr-4": {"PhpWorld\\Tests\\": "tests/"}
